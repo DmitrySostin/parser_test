@@ -1,3 +1,6 @@
 /chromedriver/
 /.vscose/
 /venv/
+/.vscose/
+/chromedriver/
+/.idea/
