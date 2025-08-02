@@ -9,9 +9,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import requests
 
-
-user_name = "You-login"
-user_pass = "You-pass"
+                                   # данные Вашей учетной записи
+user_name = "You-login"            # Введите свой логин
+user_pass = "You-pass"             # введите свой пароль
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
 }
@@ -82,6 +82,11 @@ class SenergyPars:
         with open('link_first_page.json', 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
         print(f'>>> Запись ___link_first_page.json___ прошла успешно !..')
+
+    ############################################################################################################
+    # в этом моменте нужно каждыый раз ввести директорию для сохранения файлов                                 #
+    # и JSON файл из которого считываем ссылки на блоки уроков                                                 #
+    ############################################################################################################
     #                               Куда сохранять
     def __search_pdf(self, save_dir="part3"):
         os.makedirs(save_dir, exist_ok=True)
