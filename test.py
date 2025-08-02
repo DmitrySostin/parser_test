@@ -73,8 +73,6 @@ class SenergyPars:
                 link_element = title.find_element(By.TAG_NAME, 'a')
                 descript = link_element.text
                 link = link_element.get_attribute('href')
-
-
                 data[descript] = link
                 print(f">>> Сохраняем >>{descript}<< и URL в Dict ...")
             except:
@@ -101,13 +99,18 @@ class SenergyPars:
                 self.driver.switch_to.window(self.driver.window_handles[-1])
                 print(f'\n>>> Открыта ссылка: {key} ({value})...')
 
+                # Получаем заголовок страницы из тега <title>
+                page_title = self.driver.title.strip()
+                safe_title = "".join(c if c.isalnum() or c in (' ', '_', '-') else '_' for c in page_title)
+                safe_title = safe_title[:50]  # Ограничиваем длину
+
                 # Ожидание полной загрузки страницы
                 WebDriverWait(self.driver, 5).until(
                     EC.presence_of_element_located((By.TAG_NAME, 'body'))
                 )
                 # Прокрутка для подгрузки динамического контента
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-                #time.sleep(3)
+                #time.sleep(3)     # без этой задержки иногда случаются сбои
 
                 # Поиск всех iframe на странице
                 iframes = WebDriverWait(self.driver, 5).until(
@@ -166,10 +169,13 @@ class SenergyPars:
                             current_url = self.driver.current_url
                             pdf_url = urljoin(current_url, pdf_url)
 
-                        # Генерация имени файла
-                        filename = os.path.basename(pdf_url.split('?')[0])
-                        if not filename.lower().endswith('.pdf'):
-                            filename = f"{link_text.strip() or 'document'}_{i}.pdf".replace('/', '_')
+                        # Генерация имени файла как в оригинале
+                        #filename = os.path.basename(pdf_url.split('?')[0])
+                        #if not filename.lower().endswith('.pdf'):
+                        #    filename = f"{link_text.strip() or 'document'}_{i}.pdf".replace('/', '_')
+
+                        # генерация имени пдф с Title страници
+                        filename = f"{safe_title}_{i}.pdf"
 
                         save_path = os.path.join(save_dir, filename)
 
@@ -267,14 +273,16 @@ class SenergyPars:
         self.driver.quit()
 
     def parser(self):
-        self.__set_up()
-        self.__get_url()
-        self.__login()
-        #self.__search_link()
-        #self.__open_new_page()
-        self.__search_pdf()
-        self.__stop()
-
+        self.__set_up()              # старт программы
+        self.__get_url()             # ввод адреса
+        self.__login()               # регистрация на ресурсе
+        #self.__search_link()        # (1) первоначальный поиск с главной страници
+        #self.__open_new_page()      # (1) открытие новой вкладки и поиск ссылок в ней по категориям
+        #self.__search_pdf()         # (2) скацивание файлов в формате пдф
+        self.__stop()                # остановка веб драйвера
+                                     # в первый запуск нужно раскомментировать строки с номером (1)
+                                     # во второй запуск (1) закоментировать а строку (2) раскоментировать
+                                     # к сожалению другого более элегантого способа придумать я не смог
 
 if __name__ == "__main__":
     SenergyPars(url='https://lms.synergy.ru/', user_name=user_name, user_pass=user_pass, key=None).parser()
