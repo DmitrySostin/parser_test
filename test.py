@@ -102,7 +102,6 @@ class SenergyPars:
                 # Получаем заголовок страницы из тега <title>
                 page_title = self.driver.title.strip()
                 safe_title = "".join(c if c.isalnum() or c in (' ', '_', '-') else '_' for c in page_title)
-                safe_title = safe_title[:50]  # Ограничиваем длину
 
                 # Ожидание полной загрузки страницы
                 WebDriverWait(self.driver, 5).until(
